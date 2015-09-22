@@ -130,7 +130,7 @@ public class StringSetImpl implements StringSet, StreamSerializable {
             char ch;
             while (in.available() != 0) {
                 ch = (char)in.read();
-                if (ch != '\n')
+                if (ch != '\n' && ch != '\r')
                     sb.append(ch);
                 else {
                     add(sb.toString());
