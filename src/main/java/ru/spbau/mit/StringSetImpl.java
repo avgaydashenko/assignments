@@ -11,7 +11,7 @@ public class StringSetImpl implements StringSet, StreamSerializable {
         Node[] uppCase = new Node [26];
         boolean terminated = false;
         int prefixNumber = 0;
-        String curText = "";
+        static String curText = "";
 
         public Node getNext(char ch) {
             if (Character.isUpperCase(ch))
@@ -36,16 +36,19 @@ public class StringSetImpl implements StringSet, StreamSerializable {
                         out.write("\n".getBytes("UTF-8"));
                     }
                     uppCase[i].print(out);
+                    curText = curText.substring(0, curText.length() - 1);
                 }
+            }
+            for (int i = 0; i < 26; i++) {
                 if (lowCase[i] != null) {
-                    curText += (char)('a' + i);
+                    curText += (char) ('a' + i);
                     if (lowCase[i].terminated) {
                         out.write(curText.getBytes("UTF-8"));
                         out.write("\n".getBytes("UTF-8"));
                     }
                     lowCase[i].print(out);
+                    curText = curText.substring(0, curText.length() - 1);
                 }
-                curText = curText.substring(0, curText.length() - 1);
             }
         }
     }
