@@ -8,7 +8,7 @@ public class StringSetImpl implements StringSet, StreamSerializable {
 
     static class Node {
         Node[] lowCase = new Node[26];
-        Node[] uppCase = new Node [26];
+        Node[] uppCase = new Node[26];
         boolean terminated = false;
         int prefixNumber = 0;
         static String curText = "";
@@ -54,6 +54,8 @@ public class StringSetImpl implements StringSet, StreamSerializable {
     }
 
     private Node root;
+
+    private int EmptyNumb = 0;
 
     public StringSetImpl() {
         root = new Node();
@@ -116,6 +118,10 @@ public class StringSetImpl implements StringSet, StreamSerializable {
 
     public void serialize(OutputStream out) {
         try {
+            if (root.terminated) {
+                out.write("#".getBytes("UTF-8"));
+                out.write("\n".getBytes("UTF-8"));
+            }
             root.print(out);
         }
         catch (IOException exp) {
@@ -130,6 +136,10 @@ public class StringSetImpl implements StringSet, StreamSerializable {
             char ch;
             while (in.available() != 0) {
                 ch = (char)in.read();
+                if (ch == '#') {
+                    add("");
+                    continue;
+                }
                 if (ch != '\n' && ch != '\r')
                     sb.append(ch);
                 else {
