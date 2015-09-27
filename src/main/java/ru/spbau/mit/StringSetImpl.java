@@ -6,6 +6,11 @@ import java.io.OutputStream;
 
 public class StringSetImpl implements StringSet, StreamSerializable {
 
+    private class Pair {
+        int first = 0;
+        boolean second = false;
+    }
+
     private static class Node {
 
         private static final int alphLen = 26;
@@ -58,25 +63,25 @@ public class StringSetImpl implements StringSet, StreamSerializable {
 
     private Node root = new Node();
 
-    public boolean contains(String element) {
-        Node currNode = root;
-        for (char ch : element.toCharArray()) {
-            if (currNode.getNext(ch) == null)
-                return false;
-            else
-                currNode = currNode.getNext(ch);
-        }
-        return (currNode.terminated);
-    }
-
-    public int howManyStartsWithPrefix(String prefix) {
+    private Pair getPairOfNumbAndTerm(String prefix) {
+        Pair a = new Pair();
         Node currNode = root;
         for (char ch : prefix.toCharArray()) {
             currNode = currNode.getNext(ch);
             if (currNode == null)
-                return 0;
+                return a;
         }
-        return (currNode.prefixNumber);
+        a.first = currNode.prefixNumber;
+        a.second = currNode.terminated;
+        return a;
+    }
+
+    public int howManyStartsWithPrefix(String prefix) {
+        return (getPairOfNumbAndTerm(prefix).first);
+    }
+
+    public boolean contains(String element) {
+        return (getPairOfNumbAndTerm(element).second);
     }
 
     public boolean add(String element) {
