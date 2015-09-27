@@ -6,29 +6,32 @@ import java.io.OutputStream;
 
 public class StringSetImpl implements StringSet, StreamSerializable {
 
-    static class Node {
-        Node[] lowCase = new Node[26];
-        Node[] uppCase = new Node[26];
+    private static class Node {
+
+        private static final int alphLen = 26;
+
+        Node[] lowCase = new Node[alphLen];
+        Node[] uppCase = new Node[alphLen];
         boolean terminated = false;
         int prefixNumber = 0;
         static String curText = "";
 
-        public Node getNext(char ch) {
+        private Node getNext(char ch) {
             if (Character.isUpperCase(ch))
                 return uppCase[ch - 'A'];
             else
                 return lowCase[ch - 'a'];
         }
 
-        public void addNode(char ch) {
+        private void addNode(char ch) {
             if (Character.isUpperCase(ch))
                 uppCase[ch - 'A'] = new Node();
             else
                 lowCase[ch - 'a'] = new Node();
         }
 
-        public void print(OutputStream out) throws IOException {
-            for (int i = 0; i < 26; i++) {
+        private void print(OutputStream out) throws IOException {
+            for (int i = 0; i < alphLen; i++) {
                 if (uppCase[i] != null) {
                     curText += (char)('A' + i);
                     if (uppCase[i].terminated) {
@@ -39,7 +42,7 @@ public class StringSetImpl implements StringSet, StreamSerializable {
                     curText = curText.substring(0, curText.length() - 1);
                 }
             }
-            for (int i = 0; i < 26; i++) {
+            for (int i = 0; i < alphLen; i++) {
                 if (lowCase[i] != null) {
                     curText += (char) ('a' + i);
                     if (lowCase[i].terminated) {
@@ -53,39 +56,43 @@ public class StringSetImpl implements StringSet, StreamSerializable {
         }
     }
 
-    private Node root;
-
-    private int EmptyNumb = 0;
-
-    public StringSetImpl() {
-        root = new Node();
-    }
+    private Node root = new Node();
 
     public boolean contains(String element) {
-        Node v = root;
+        Node currNode = root;
         for (char ch : element.toCharArray()) {
-            if (v.getNext(ch) == null)
+            if (currNode.getNext(ch) == null)
                 return false;
             else
-                v = v.getNext(ch);
+                currNode = currNode.getNext(ch);
         }
-        return (v.terminated);
+        return (currNode.terminated);
+    }
+
+    public int howManyStartsWithPrefix(String prefix) {
+        Node currNode = root;
+        for (char ch : prefix.toCharArray()) {
+            currNode = currNode.getNext(ch);
+            if (currNode == null)
+                return 0;
+        }
+        return (currNode.prefixNumber);
     }
 
     public boolean add(String element) {
         if (!contains(element)) {
-            Node v = root;
-            v.prefixNumber++;
+            Node currNode = root;
+            currNode.prefixNumber++;
             for (char ch: element.toCharArray()) {
-                Node next = v.getNext(ch);
+                Node next = currNode.getNext(ch);
                 if (next == null) {
-                    v.addNode(ch);
-                    next = v.getNext(ch);
+                    currNode.addNode(ch);
+                    next = currNode.getNext(ch);
                 }
                 next.prefixNumber++;
-                v = next;
+                currNode = next;
             }
-            v.terminated = true;
+            currNode.terminated = true;
             return true;
         }
         return false;
@@ -93,13 +100,13 @@ public class StringSetImpl implements StringSet, StreamSerializable {
 
     public boolean remove(String element) {
         if (contains(element)) {
-            Node v = root;
-            v.prefixNumber--;
+            Node currNode = root;
+            currNode.prefixNumber--;
             for (char ch: element.toCharArray()) {
-                v = v.getNext(ch);
-                v.prefixNumber--;
+                currNode = currNode.getNext(ch);
+                currNode.prefixNumber--;
             }
-            v.terminated = false;
+            currNode.terminated = false;
             return true;
         }
         return false;
@@ -107,13 +114,6 @@ public class StringSetImpl implements StringSet, StreamSerializable {
 
     public int size() {
         return root.prefixNumber;
-    }
-
-    public int howManyStartsWithPrefix(String prefix) {
-        Node v = root;
-        for (char ch : prefix.toCharArray())
-            v = v.getNext(ch);
-        return (v.prefixNumber);
     }
 
     public void serialize(OutputStream out) {
