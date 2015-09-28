@@ -6,17 +6,12 @@ import java.io.OutputStream;
 
 public class StringSetImpl implements StringSet, StreamSerializable {
 
-    private class Pair {
-        int first = 0;
-        boolean second = false;
-    }
-
     private static class Node {
 
-        private static final int alphLen = 26;
+        private static final int ALPH_LEN = 26;
 
-        Node[] lowCase = new Node[alphLen];
-        Node[] uppCase = new Node[alphLen];
+        Node[] lowCase = new Node[ALPH_LEN];
+        Node[] uppCase = new Node[ALPH_LEN];
         boolean terminated = false;
         int prefixNumber = 0;
         static String curText = "";
@@ -36,7 +31,7 @@ public class StringSetImpl implements StringSet, StreamSerializable {
         }
 
         private void print(OutputStream out) throws IOException {
-            for (int i = 0; i < alphLen; i++) {
+            for (int i = 0; i < ALPH_LEN; i++) {
                 if (uppCase[i] != null) {
                     curText += (char)('A' + i);
                     if (uppCase[i].terminated) {
@@ -47,7 +42,7 @@ public class StringSetImpl implements StringSet, StreamSerializable {
                     curText = curText.substring(0, curText.length() - 1);
                 }
             }
-            for (int i = 0; i < alphLen; i++) {
+            for (int i = 0; i < ALPH_LEN; i++) {
                 if (lowCase[i] != null) {
                     curText += (char) ('a' + i);
                     if (lowCase[i].terminated) {
@@ -63,25 +58,23 @@ public class StringSetImpl implements StringSet, StreamSerializable {
 
     private Node root = new Node();
 
-    private Pair getPairOfNumbAndTerm(String prefix) {
-        Pair a = new Pair();
+    private Node getLastNode(String prefix) {
         Node currNode = root;
+        final Node nullNode = new Node();
         for (char ch : prefix.toCharArray()) {
             currNode = currNode.getNext(ch);
             if (currNode == null)
-                return a;
+                return nullNode;
         }
-        a.first = currNode.prefixNumber;
-        a.second = currNode.terminated;
-        return a;
+        return currNode;
     }
 
     public int howManyStartsWithPrefix(String prefix) {
-        return (getPairOfNumbAndTerm(prefix).first);
+        return getLastNode(prefix).prefixNumber;
     }
 
     public boolean contains(String element) {
-        return (getPairOfNumbAndTerm(element).second);
+        return getLastNode(element).terminated;
     }
 
     public boolean add(String element) {
