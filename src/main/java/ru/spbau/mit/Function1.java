@@ -1,7 +1,17 @@
 package ru.spbau.mit;
 
-/**
- * Created by Anastasia on 27.09.2015.
- */
-public class Function1 {
+public abstract class Function1<T, R> {
+
+    public abstract R apply(T arg);
+
+    public <R2> Function1<T, R2> compose(final Function1<? super R, R2> outer) {
+        final Function1<T, R> inner = this;
+
+        return new Function1<T, R2>() {
+            @Override
+            public R2 apply(T newArg) {
+                return outer.apply(inner.apply(newArg));
+            }
+        };
+    }
 }
