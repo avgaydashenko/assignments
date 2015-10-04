@@ -47,22 +47,22 @@ public class Collections {
         return res;
     }
 
-    public static <T> T foldl(final Function2<T, T, T> f, T startValue, final Iterable<T> a) {
-        T currRes = startValue;
+    public static <T, R> R foldl(final Function2<? super R, ? super T, ? extends R> f, R startValue, final Iterable<T> a) {
+        R currRes = startValue;
         for (T element : a) {
             currRes = f.apply(currRes, element);
         }
         return currRes;
     }
 
-    public static <T> T foldr(final Function2<T, T, T> f, T startValue, final Iterable<T> a) {
-        T currRes = startValue;
+    public static <T, R> R foldr(final Function2<? super T, ? super R, ? extends R> f, R startValue, final Iterable<T> a) {
+        R currRes = startValue;
         ArrayList<T> tmp = new ArrayList<T>();
         for (T element : a) {
             tmp.add(element);
         }
         for (int i = tmp.size() - 1; i >= 0; i--) {
-            currRes = f.apply(currRes, tmp.get(i));
+            currRes = f.apply(tmp.get(i), currRes);
         }
         return currRes;
     }

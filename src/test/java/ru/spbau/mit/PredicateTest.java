@@ -21,16 +21,28 @@ public class PredicateTest {
             }
         };
 
+    private static Predicate<Integer> badPred =
+            new Predicate<Integer>() {
+                @Override
+                public Boolean apply(Integer num) {
+                    return (num % 0 == 0);
+                }
+            };
+
     @Test
     public void testAnd() {
-        assertTrue(true == dividedFive.and(dividedThree).apply(15));
+        assertTrue(false == dividedFive.and(dividedThree).apply(3));
         assertTrue(true == dividedFive.and(dividedThree).and(Predicate.ALWAYS_TRUE).apply(30));
+
+        assertTrue(false == dividedFive.and(badPred).apply(3));
     }
 
     @Test
     public void testOr() {
         assertTrue(true == dividedFive.or(dividedThree).apply(9));
         assertTrue(true == dividedFive.or(dividedThree).or(Predicate.ALWAYS_FALSE).apply(5));
+
+        assertTrue(true == dividedFive.or(badPred).apply(10));
     }
 
     @Test
