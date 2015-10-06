@@ -38,9 +38,11 @@ public class CollectionsTest {
 
     @Test
     public void testMap() {
-        ArrayList<Integer> test = (ArrayList<Integer>)Collections.map(addTen, a);
-        for (int i = 0; i < test.size(); i++) {
-            assertEquals((long)test.get(i), a.get(i) + 10);
+        Iterable<Integer> test = Collections.map(addTen, a);
+        Integer i = 0;
+        for (Integer element : test) {
+            assertEquals((long)element, a.get(i) + 10);
+            i++;
         }
     }
 
