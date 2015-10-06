@@ -47,20 +47,20 @@ public class Function1Test {
 
     @Test
     public void testApply() {
-        assertTrue(10 == addTen.apply(0));
-        assertTrue(20 == addTen.apply(10));
+        assertEquals(10, (long)addTen.apply(0));
+        assertEquals(20, (long)addTen.apply(10));
 
-        assertTrue(10 == multTwo.apply(5));
-        assertTrue(20 == multTwo.apply(10));
+        assertEquals(10, (long)multTwo.apply(5));
+        assertEquals(20, (long)multTwo.apply(10));
 
-        assertTrue("meow" == animalSay.apply(new Cat()));
-        assertTrue("bark" == animalSay.apply(new Dog()));
+        assertEquals("meow", animalSay.apply(new Cat()));
+        assertEquals("bark", animalSay.apply(new Dog()));
     }
 
     @Test
     public void testCompose() {
-        assertTrue(30 == addTen.compose(multTwo).apply(5));
-        assertTrue(20 == multTwo.compose(addTen).apply(5));
-        assertTrue(20 == multTwo.compose(multTwo).apply(5));
+        assertEquals(30, (long)addTen.compose(multTwo).apply(5));
+        assertEquals(20, (long)multTwo.compose(addTen).apply(5));
+        assertEquals(20, (long)multTwo.compose(multTwo).apply(5));
     }
 }

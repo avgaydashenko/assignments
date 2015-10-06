@@ -38,40 +38,40 @@ public class CollectionsTest {
 
     @Test
     public void testMap() {
-        ArrayList<Integer> test = (ArrayList<Integer>)(new Collections()).map(addTen, a);
+        ArrayList<Integer> test = (ArrayList<Integer>)Collections.map(addTen, a);
         for (int i = 0; i < test.size(); i++) {
-            assertTrue(test.get(i) == a.get(i) + 10);
+            assertEquals((long)test.get(i), a.get(i) + 10);
         }
     }
 
     @Test
     public void testFilter() {
-        ArrayList<Integer> test = (ArrayList<Integer>)(new Collections()).filter(dividedThree, a);
-        assertTrue(test.get(0) == 3);
-        assertTrue(test.size() == 1);
+        ArrayList<Integer> test = (ArrayList<Integer>)Collections.filter(dividedThree, a);
+        assertEquals((long)test.get(0), 3);
+        assertEquals(test.size(), 1);
     }
 
     @Test
     public void testTakeWhile() {
-        ArrayList<Integer> test = (ArrayList<Integer>)(new Collections()).takeWhile(dividedThree, a);
-        assertTrue(test.size() == 0);
+        ArrayList<Integer> test = (ArrayList<Integer>)Collections.takeWhile(dividedThree, a);
+        assertEquals(test.size(), 0);
     }
 
     @Test
     public void testTakeUnless() {
-        ArrayList<Integer> test = (ArrayList<Integer>)(new Collections()).takeUnless(dividedThree, a);
-        assertTrue(test.size() == 3);
+        ArrayList<Integer> test = (ArrayList<Integer>)Collections.takeUnless(dividedThree, a);
+        assertEquals(test.size(), 3);
     }
 
     @Test
     public void testFoldl() {
-        Integer test = (new Collections()).foldl(minus, TEST_VALUE, a);
-        assertTrue(test == -9);
+        Integer test = Collections.foldl(minus, TEST_VALUE, a);
+        assertEquals((long)test, -9);
     }
 
     @Test
     public void testFoldr() {
-        Integer test = (new Collections()).foldr(minus, TEST_VALUE, a);
-        assertTrue(test == -1);
+        Integer test = Collections.foldr(minus, TEST_VALUE, a);
+        assertEquals((long)test, -1);
     }
 }
