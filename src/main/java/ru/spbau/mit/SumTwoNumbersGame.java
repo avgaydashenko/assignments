@@ -2,19 +2,34 @@ package ru.spbau.mit;
 
 import java.util.*;
 
-
 public class SumTwoNumbersGame implements Game {
+    private final GameServer gameServer;
+
+    Random random = new Random();
+    private Integer num1 = Math.abs(random.nextInt()),
+            num2 = Math.abs(random.nextInt());
+
     public SumTwoNumbersGame(GameServer server) {
-        throw new UnsupportedOperationException("TODO: implement");
+        gameServer = server;
     }
 
     @Override
     public void onPlayerConnected(String id) {
-        throw new UnsupportedOperationException("TODO: implement");
+        gameServer.sendTo(id, num1.toString() + " " + num2.toString());
     }
 
     @Override
     public void onPlayerSentMsg(String id, String msg) {
-        throw new UnsupportedOperationException("TODO: implement");
+        if (Integer.parseInt(msg) == num1 + num2) {
+
+            num1 = Math.abs(random.nextInt());
+            num2 = Math.abs(random.nextInt());
+
+            gameServer.sendTo(id, "Right");
+            gameServer.broadcast(id + " won");
+            gameServer.broadcast(num1.toString() + " " + num2.toString());
+        } else {
+            gameServer.sendTo(id, "Wrong");
+        }
     }
 }
