@@ -17,12 +17,12 @@ public class SumTwoNumbersGame implements Game {
     }
 
     @Override
-    public void onPlayerConnected(String id) {
+    public synchronized void onPlayerConnected(String id) {
         gameServer.sendTo(id, num1.toString() + " " + num2.toString());
     }
 
     @Override
-    public void onPlayerSentMsg(String id, String msg) {
+    public synchronized void onPlayerSentMsg(String id, String msg) {
         if (Integer.parseInt(msg) == num1 + num2) {
 
             num1 = newNum();

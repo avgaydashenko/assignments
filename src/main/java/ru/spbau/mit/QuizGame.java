@@ -101,31 +101,31 @@ public class QuizGame implements Game {
     public void onPlayerConnected(String id) {}
 
     @Override
-    public void onPlayerSentMsg(String id, String msg) {
+    public synchronized void onPlayerSentMsg(String id, String msg) {
 
-        synchronized (this) {
-            if (msg.equals("!start")) {
+        if (msg.equals("!start")) {
 
-                if (isStopped) {
-                    if (thread != null) {
-                        try {
-                            thread.join();
-                        } catch (InterruptedException _) {}
+            if (isStopped) {
+                if (thread != null) {
+                    try {
+                        thread.join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                    isStopped = false;
-                    thread = new Thread(new Task());
-                    thread.start();
                 }
-            } else if (msg.equals("!stop")) {
-                isStopped = true;
-                thread.interrupt();
-                gameServer.broadcast("Game has been stopped by " + id);
-            } else if (msg.equals(answers.get(round))) {
-                gameServer.broadcast("The winner is " + id);
-                thread.interrupt();
-            } else {
-                gameServer.sendTo(id, "Wrong try");
+                isStopped = false;
+                thread = new Thread(new Task());
+                thread.start();
             }
+        } else if (msg.equals("!stop")) {
+            isStopped = true;
+            thread.interrupt();
+            gameServer.broadcast("Game has been stopped by " + id);
+        } else if (msg.equals(answers.get(round))) {
+            gameServer.broadcast("The winner is " + id);
+            thread.interrupt();
+        } else {
+            gameServer.sendTo(id, "Wrong try");
         }
     }
 }
