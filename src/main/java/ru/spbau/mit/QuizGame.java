@@ -8,8 +8,8 @@ import java.util.concurrent.TimeUnit;
 public class QuizGame implements Game {
     private final GameServer gameServer;
 
-    private Integer delayUntilNextLetter;
-    private Integer maxLettersToOpen;
+    private int delayUntilNextLetter;
+    private int maxLettersToOpen;
     private String dictionaryFilename;
 
     private Thread thread;
@@ -20,21 +20,19 @@ public class QuizGame implements Game {
 
     private Boolean isStopped;
 
-    class Task implements Runnable {
+    private class Task implements Runnable {
         @Override
         public void run() {
             while (!isStopped) {
 
                 if (questions.size() == 0) {
                     try {
-                        synchronized (questions) {
-                            round = -1;
-                            Scanner scanner = new Scanner(new File(dictionaryFilename));
-                            while (scanner.hasNext()) {
-                                String[] pair = (scanner.nextLine()).split(";");
-                                questions.add(pair[0]);
-                                answers.add(pair[1]);
-                            }
+                        round = -1;
+                        Scanner scanner = new Scanner(new File(dictionaryFilename));
+                        while (scanner.hasNext()) {
+                            String[] pair = (scanner.nextLine()).split(";");
+                            questions.add(pair[0]);
+                            answers.add(pair[1]);
                         }
                     } catch (FileNotFoundException _) {}
                 }

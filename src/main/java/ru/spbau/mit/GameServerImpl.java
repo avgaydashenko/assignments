@@ -7,7 +7,7 @@ import java.util.*;
 
 public class GameServerImpl implements GameServer {
 
-    private Game game;
+    private final Game game;
     private Map<String, Connection> connectionMap = new HashMap<String, Connection>();
     private Integer id = 0;
 
@@ -25,7 +25,7 @@ public class GameServerImpl implements GameServer {
             game.onPlayerConnected(id);
             while (!connection.isClosed()) {
                 try {
-                    synchronized (connection) {
+                    synchronized (connectionMap) {
                         if (!connection.isClosed()) {
                             String msg = connection.receive(1000);
                             if (msg != null) {
@@ -75,15 +75,22 @@ public class GameServerImpl implements GameServer {
 
     @Override
     public void accept(final Connection connection) {
-        synchronized (connectionMap) {
-            connectionMap.put(id.toString(), connection);
+
+        String idStr = "";
+
+        synchronized (id) {
+            idStr = id.toString();
+            id++;
         }
 
-        connection.send(id.toString());
+        synchronized (connectionMap) {
+            connectionMap.put(idStr, connection);
+        }
 
-        Thread thread = new Thread(new Task(id.toString(), connection));
+        connection.send(idStr);
+
+        Thread thread = new Thread(new Task(idStr, connection));
         thread.start();
-        id++;
     }
 
     @Override

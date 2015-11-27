@@ -5,9 +5,12 @@ import java.util.*;
 public class SumTwoNumbersGame implements Game {
     private final GameServer gameServer;
 
-    Random random = new Random();
-    private Integer num1 = Math.abs(random.nextInt()),
-            num2 = Math.abs(random.nextInt());
+    private final Random random = new Random();
+    private Integer num1 = newNum(), num2 = newNum();
+
+    private Integer newNum() {
+        return Math.abs(random.nextInt());
+    }
 
     public SumTwoNumbersGame(GameServer server) {
         gameServer = server;
@@ -22,8 +25,8 @@ public class SumTwoNumbersGame implements Game {
     public void onPlayerSentMsg(String id, String msg) {
         if (Integer.parseInt(msg) == num1 + num2) {
 
-            num1 = Math.abs(random.nextInt());
-            num2 = Math.abs(random.nextInt());
+            num1 = newNum();
+            num2 = newNum();
 
             gameServer.sendTo(id, "Right");
             gameServer.broadcast(id + " won");
