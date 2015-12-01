@@ -8,8 +8,8 @@ import java.util.*;
 public class GameServerImpl implements GameServer {
 
     private final Game game;
-    private Map<String, Connection> connectionMap = new HashMap<String, Connection>();
-    private Integer id = 0;
+    private final Map<String, Connection> connectionMap = new HashMap<String, Connection>();
+    private int id = 0;
 
     private class Task implements Runnable {
         private final String id;
@@ -78,10 +78,8 @@ public class GameServerImpl implements GameServer {
 
         String idStr = "";
 
-        synchronized (id) {
-            idStr = id.toString();
-            id++;
-        }
+        idStr = String.valueOf(id);
+        id++;
 
         synchronized (connectionMap) {
             connectionMap.put(idStr, connection);

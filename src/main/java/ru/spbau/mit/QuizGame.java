@@ -16,7 +16,7 @@ public class QuizGame implements Game {
 
     private List<String> questions = new ArrayList<>();
     private List<String> answers = new ArrayList<>();
-    private Integer round;
+    private int round;
 
     private Boolean isStopped;
 
