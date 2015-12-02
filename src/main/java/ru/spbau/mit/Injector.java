@@ -15,7 +15,7 @@ public class Injector {
      * `implementationClassNames` for concrete dependencies.
      */
 
-    private static Object get(String expectedClassName, List<String> classesList, Map<String, Boolean> classesMap)
+    private static Object get(String expectedClassName, List<String> classesList, Map<String, Object> classesMap)
             throws ClassNotFoundException, AmbiguousImplementationException, ImplementationNotFoundException,
             InjectionCycleException, IllegalAccessException, InvocationTargetException, InstantiationException {
 
@@ -25,7 +25,7 @@ public class Injector {
 
         boolean parentFound = false;
         String parentName = null;
-        Class<?> parentClass;
+        Class<?> parentClass = null;
 
         for (String implClassName : classesList)
             if (expectedClass.isAssignableFrom(Class.forName(implClassName)))
@@ -41,13 +41,13 @@ public class Injector {
         else {
             parentClass = Class.forName(parentName);
             if (classesMap.containsKey(parentName))
-                if (classesMap.get(parentName))
-                    return parentClass;
+                if (classesMap.get(parentName) != null)
+                    return classesMap.get(parentName);
                 else
                     throw new InjectionCycleException();
         }
 
-        classesMap.put(parentName, false);
+        classesMap.put(parentName, null);
 
         Constructor<?> constructor = parentClass.getConstructors()[0];
 
@@ -56,9 +56,9 @@ public class Injector {
         for (Class<?> implClass : constructor.getParameterTypes())
             parameters.add(get(implClass.getName(), classesList, classesMap));
 
-        classesMap.put(parentName, true);
-
         result = constructor.newInstance(parameters.toArray());
+
+        classesMap.put(parentName, result);
 
         return result;
     }
@@ -66,7 +66,7 @@ public class Injector {
     public static Object initialize(String rootClassName, List<String> implementationClassNames) throws Exception {
 
         List<String> classesList = new ArrayList<>();
-        Map<String, Boolean> classesMap = new HashMap<String, Boolean>();
+        Map<String, Object> classesMap = new HashMap<String, Object>();
 
         for (String implementationClass : implementationClassNames) classesList.add(implementationClass);
         classesList.add(rootClassName);
