@@ -57,7 +57,7 @@ public class Injector {
 
         System.out.println("5");
 
-        //classesMap.put(parentName, true);
+        classesMap.put(parentName, false);
 
         Constructor<?> constructor = parentClass.getConstructors()[0];
 
@@ -68,6 +68,8 @@ public class Injector {
         for (Class<?> implClass : constructor.getParameterTypes())
             parameters.add(get(implClass.getName(), classesList, classesMap));
 
+        classesMap.put(parentName, true);
+        
         System.out.println("7");
 
         result = constructor.newInstance(parameters.toArray());
