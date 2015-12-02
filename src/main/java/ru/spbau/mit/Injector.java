@@ -27,10 +27,6 @@ public class Injector {
         String parentName = null;
         Class<?> parentClass;
 
-
-        System.out.println("3");
-
-
         for (String implClassName : classesList)
             if (expectedClass.isAssignableFrom(Class.forName(implClassName)))
                 if (parentFound)
@@ -40,22 +36,16 @@ public class Injector {
                     parentName = implClassName;
                 }
 
-
-        System.out.println("4");
-
         if (!parentFound)
             throw new ImplementationNotFoundException();
         else {
             parentClass = Class.forName(parentName);
             if (classesMap.containsKey(parentName))
                 if (classesMap.get(parentName))
-                    result = parentClass;
+                    return parentClass;
                 else
                     throw new InjectionCycleException();
         }
-
-
-        System.out.println("5");
 
         classesMap.put(parentName, false);
 
@@ -63,18 +53,12 @@ public class Injector {
 
         List<Object> parameters = new ArrayList<>();
 
-        System.out.println("6");
-
         for (Class<?> implClass : constructor.getParameterTypes())
             parameters.add(get(implClass.getName(), classesList, classesMap));
 
         classesMap.put(parentName, true);
-        
-        System.out.println("7");
 
         result = constructor.newInstance(parameters.toArray());
-
-        System.out.println("8");
 
         return result;
     }
@@ -85,9 +69,7 @@ public class Injector {
         Map<String, Boolean> classesMap = new HashMap<String, Boolean>();
 
         for (String implementationClass : implementationClassNames) classesList.add(implementationClass);
-        System.out.println("1");
         classesList.add(rootClassName);
-        System.out.println("2");
         return get(rootClassName, classesList, classesMap);
     }
 }
